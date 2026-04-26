@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+*.sqlite3
+.env
+db.sqlite3
+
+# Node / React
+node_modules/
+build/
+.DS_Store
+*.log
+
+# Secrets and local config
+backend/core/settings_local.py

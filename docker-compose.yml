@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: playto_db
+      POSTGRES_USER: playto_user
+      POSTGRES_PASSWORD: Naresh@8177
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    command: sh -c "python manage.py migrate && python manage.py seed_merchants && python manage.py run_huey & python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://playto_user:Naresh@8177@db:5432/playto_db
+
+volumes:
+  postgres_data:
