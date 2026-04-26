@@ -85,3 +85,63 @@ Response:
   "held_balance_paise": 0
 }
 
+Request a Payout
+POST /api/v1/merchants/{merchant_id}/payouts/
+Headers:
+  Idempotency-Key: <UUID>
+Body:
+{
+  "amount_paise": 20000,
+  "bank_account_id": "HDFC123"
+}
+
+Payout History
+GET /api/v1/merchants/{merchant_id}/payouts/history/
+
+🧪 Testing
+python manage.py test payouts.tests.test_concurrency
+python manage.py test payouts.tests.test_idempotency
+
+⚙️ Configuration
+DB_NAME=playto_db
+DB_USER=playto_user
+DB_PASSWORD=Naresh@8177
+DB_HOST=localhost
+DB_PORT=5432
+
+📁 Project Structure
+playto-payout-engine/
+├── backend/
+│   ├── core/                 # Django project settings
+│   ├── payouts/              # main app
+│   │   ├── migrations/
+│   │   ├── management/commands/  # seed_merchants
+│   │   ├── tests/                 # concurrency + idempotency
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── tasks.py
+│   │   ├── utils.py
+│   │   └── serializers.py
+│   ├── requirements.txt
+│   └── manage.py
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── App.js
+│   │   ├── api.js
+│   │   └── index.css
+│   ├── package.json
+│   └── tailwind.config.js
+├── docker-compose.yml
+├── README.md
+└── EXPLAINER.md
+
+📄 License
+This project is for evaluation purposes only. Not for production use without proper security review.
+
+👨‍💻 Author
+Built for the Playto technical assignment.
+Demonstrates idempotency, concurrency control, and a full‑stack payout engine.
+'@ | Out-File -FilePath README.md -Encoding utf8
+

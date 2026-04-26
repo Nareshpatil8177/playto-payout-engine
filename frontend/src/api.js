@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:8000/api/v1';
-// Replace with the UUID you copied when running seed_merchants
+// REPLACE WITH YOUR ACTUAL MERCHANT UUID FROM seed_merchants
 const MERCHANT_ID = '2bb9876b-f075-4adb-9e67-f6f4e47a5cff';
 
 const api = axios.create({

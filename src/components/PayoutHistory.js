@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { getPayoutHistory } from '../api';
 
 const StatusBadge = ({ status }) => {
-  const config = {
-    COMPLETED: 'bg-green-500/20 text-green-300 border-green-500/50',
-    FAILED: 'bg-red-500/20 text-red-300 border-red-500/50',
-    PENDING: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/50 animate-pulse',
-    PROCESSING: 'bg-blue-500/20 text-blue-300 border-blue-500/50',
+  const colors = {
+    COMPLETED: 'bg-green-600',
+    FAILED: 'bg-red-600',
+    PENDING: 'bg-yellow-600',
+    PROCESSING: 'bg-blue-600',
   };
-  const base = 'px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-sm';
-  return <span className={`${base} ${config[status] || config.PENDING}`}>{status}</span>;
+  return (
+    <span className={`px-2 py-1 rounded text-xs font-semibold ${colors[status] || 'bg-gray-600'}`}>
+      {status}
+    </span>
+  );
 };
 
 export default function PayoutHistory() {
@@ -20,8 +23,8 @@ export default function PayoutHistory() {
     try {
       const res = await getPayoutHistory();
       setPayouts(res.data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -34,45 +37,36 @@ export default function PayoutHistory() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 animate-pulse">
-        <div className="h-64 bg-white/10 rounded-2xl"></div>
-      </div>
-    );
+    return <div className="bg-gray-800 p-6 rounded-lg animate-pulse h-64"></div>;
   }
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-r from-pink-400 to-purple-500 p-2 rounded-xl">
-          <span className="text-xl">📜</span>
-        </div>
-        <h2 className="text-2xl font-bold text-white">Recent Transactions</h2>
-      </div>
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 className="text-xl font-semibold text-white mb-4">Payout History</h2>
       <div className="overflow-x-auto">
-        <table className="w-full text-white">
-          <thead>
-            <tr className="border-b border-white/20 text-indigo-200 text-sm">
-              <th className="text-left pb-3 pl-2 font-medium">Amount</th>
-              <th className="text-left pb-3 pl-2 font-medium">Bank Account</th>
-              <th className="text-left pb-3 pl-2 font-medium">Status</th>
-              <th className="text-left pb-3 pl-2 font-medium">Time</th>
+        <table className="w-full text-gray-300 text-sm">
+          <thead className="border-b border-gray-700">
+            <tr className="text-left">
+              <th className="pb-2">Amount</th>
+              <th className="pb-2">Bank Account</th>
+              <th className="pb-2">Status</th>
+              <th className="pb-2">Date</th>
             </tr>
           </thead>
           <tbody>
-            {payouts.map((payout, idx) => (
-              <tr key={payout.id} className={`border-b border-white/10 hover:bg-white/5 transition ${idx % 2 === 0 ? 'bg-white/5' : ''}`}>
-                <td className="py-4 pl-2 font-bold">₹{(payout.amount_paise / 100).toFixed(2)}</td>
-                <td className="py-4 pl-2 font-mono text-sm">{payout.bank_account_id}</td>
-                <td className="py-4 pl-2"><StatusBadge status={payout.status} /></td>
-                <td className="py-4 pl-2 text-sm text-indigo-200">{new Date(payout.created_at).toLocaleString()}</td>
+            {payouts.map((payout) => (
+              <tr key={payout.id} className="border-b border-gray-700">
+                <td className="py-2">₹{(payout.amount_paise / 100).toFixed(2)}</td>
+                <td className="py-2">{payout.bank_account_id}</td>
+                <td className="py-2"><StatusBadge status={payout.status} /></td>
+                <td className="py-2 text-xs">{new Date(payout.created_at).toLocaleString()}</td>
               </tr>
             ))}
+            {payouts.length === 0 && (
+              <tr><td colSpan="4" className="text-center py-4 text-gray-500">No payouts yet</td></tr>
+            )}
           </tbody>
         </table>
-        {payouts.length === 0 && (
-          <p className="text-center text-indigo-300 py-10">No payments yet. Make your first withdrawal!</p>
-        )}
       </div>
     </div>
   );

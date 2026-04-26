@@ -9,6 +9,10 @@ export default function PayoutForm({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!amount || !bankAccount) {
+      alert('Please fill both fields');
+      return;
+    }
     setLoading(true);
     const idempotencyKey = uuidv4();
     try {
@@ -18,32 +22,39 @@ export default function PayoutForm({ onSuccess }) {
       setBankAccount('');
     } catch (err) {
       alert(err.response?.data?.error || 'Payout failed');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Request Payout</h2>
-      <input
-        type="number"
-        placeholder="Amount (₹)"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className="border p-2 w-full mb-2"
-        required
-      />
-      <input
-        type="text"
-        placeholder="Bank Account ID"
-        value={bankAccount}
-        onChange={(e) => setBankAccount(e.target.value)}
-        className="border p-2 w-full mb-2"
-        required
-      />
-      <button type="submit" disabled={loading} className="bg-blue-500 text-white p-2 w-full">
-        {loading ? 'Processing...' : 'Withdraw'}
-      </button>
-    </form>
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 className="text-xl font-semibold text-white mb-4">Request Payout</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="number"
+          placeholder="Amount (₹)"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Bank Account ID"
+          value={bankAccount}
+          onChange={(e) => setBankAccount(e.target.value)}
+          className="w-full px-4 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition disabled:opacity-50"
+        >
+          {loading ? 'Processing...' : 'Withdraw'}
+        </button>
+      </form>
+    </div>
   );
 }
